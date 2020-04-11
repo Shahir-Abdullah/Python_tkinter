@@ -1,4 +1,5 @@
 import tkinter as tk
+'''
 #creating window
 window = tk.Tk()
 
@@ -12,11 +13,11 @@ greeting = label = tk.Label(
 )
 #pack to put the label on window
 #greeting.pack()
-
+'''
 #color charts for tkinter http://www.science.smith.edu/dftwiki/index.php/Color_Charts_for_TKinter
 # also hex color code work here. tools for getting hex code https://htmlcolorcodes.com
 
-
+'''
 #button
 button = tk.Button(
     text="Hello Mr. Shahir",
@@ -26,7 +27,7 @@ button = tk.Button(
     height="5"
 )
 #button.pack()
-
+'''
 
 #getting user input with Entry Widgets
 '''
@@ -164,12 +165,13 @@ border_effects = {
     "groove": tk.GROOVE,
     "ridge": tk.RIDGE,
 }
+'''
 for relief_name, relief in border_effects.items():
     frame = tk.Frame(master=window, relief=relief, borderwidth=5)
     #frame.pack(side=tk.LEFT) #packs the Frame into the window using .pack(). The side keyword argument tells Tkinter in which direction to pack the frame objects. You’ll see more about how this works in the next section.
     label = tk.Label(master=frame, text=relief_name)
     #label.pack()
-
+'''
 #controlling layouts using geometric manager
 '''
 Up until now, you’ve been adding widgets to windows and Frame widgets using .pack(), but you haven’t learned what exactly this method does. 
@@ -404,6 +406,72 @@ What the above example illustrates is that the .grid() geometry manager’s stic
 .grid() offers much more flexibility than you’ve seen here. For example, you can configure cells to span multiple rows and columns. For more information, check out the Grid Geometry Manager section (https://tkdocs.com/tutorial/grid.html) of the TkDocs(https://tkdocs.com/index.html) tutorial.
 '''
 
+#personal test area
+#window
+window = tk.Tk()
+window.title("Dots & Boxes")
+#colors 
+unclicked_bar_color = "#0DA6AB"
+clicked_bar_color = "#1EE0E6"
+box_complete_color_by_AI = "#0D80A4"
+box_complete_color_by_Human = "#8628AD"
+box_color = "#F2F5F7"
+
+#frame
+box_container = tk.Frame(
+    master=window,
+    relief=tk.SUNKEN,
+    borderwidth=3
+)
+box_container.pack()
+
+r = input("number of row? ")
+c = input("number of column? ")
+r = int(r)
+c = int(c)
+
+n = r*c  
+if n >= 2:
+    n = (n*4) - (((n-2)/2)*3) - (n%2) - 1
+else:
+    n = 4 
+
+total_bars = n 
+r = r + (r + 1)
+c = c + (c + 1)
+
+for i in range(0, r):
+    for j in range(0, c):
+        if i%2 == 0 and j%2 == 1:
+            #horizontal bar
+            horizontal_bar = tk.Button(
+                master=box_container,
+                text=str(total_bars),
+                fg= clicked_bar_color,
+                bg= unclicked_bar_color,
+                width="8",
+                height="1"
+            )
+            horizontal_bar.grid(row=i, column=j, sticky="nw", pady=1)
+            total_bars -= 1
+        elif i%2 == 1 and j%2 == 0:
+            #vertical bar 
+            vertical_bar = tk.Button(
+                master=box_container,
+                text=str(total_bars),
+                fg= clicked_bar_color,
+                bg= unclicked_bar_color,
+                width="1",
+                height="4"
+            )
+            vertical_bar.grid(row=i, column=j, sticky="w", padx=2)
+            total_bars -= 1
+        elif i%2==1 and j%2==1:
+            #box
+            box = tk.Label(master=box_container, bg=box_color, fg="white")
+            box.grid(row=i, column=j, sticky="wnes", padx=1)
+        
+            
 
 #without mainloop, nothing will be shown
 window.mainloop()

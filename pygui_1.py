@@ -406,6 +406,70 @@ What the above example illustrates is that the .grid() geometry manager’s stic
 .grid() offers much more flexibility than you’ve seen here. For example, you can configure cells to span multiple rows and columns. For more information, check out the Grid Geometry Manager section (https://tkdocs.com/tutorial/grid.html) of the TkDocs(https://tkdocs.com/index.html) tutorial.
 '''
 
+'''
+#binding widgets with events
+Using .bind()
+To call an event handler whenever an event occurs on a widget, use .bind(). The event handler is said to be bound to the event because it’s called every time the event occurs. You’ll continue with the keypress example from the previous section and use .bind() to bind handle_keypress() to the keypress even
+.bind() always takes at least two arguments:
+
+An event that’s represented by a string of the form "<event_name>", where event_name can be any of Tkinter’s events
+An event handler that’s the name of the function to be called whenever the event occurs
+
+'''
+'''
+window = tk.Tk()
+
+def handle_click(event):
+    print("The button was clicked!")
+
+button = tk.Button(text="Click me!")
+
+button.bind("<Button-1>", handle_click)
+button.grid(row=1, column=1)
+window.mainloop()
+'''
+'''
+Using command
+Every Button widget has a command attribute that you can assign to a function. Whenever the button is pressed, the function is executed.
+
+Take a look at an example. First, you’ll create a window with a Label widget that holds a numerical value. You’ll put buttons on the left and right side of the label. The left button will be used to decrease the value in the Label, and the right one will increase the value. Here’s the code for the window
+With the app layout defined, you can bring it to life by giving the buttons some commands. Start with the left button. When this button is pressed, it should decrease the value in the label by 1. There are two things you need to know how to do in order to do this:
+
+How do you get the text in a Label?
+How do you update the text in a Label?
+Label widgets don’t have .get() like Entry and Text widgets do. However, you can retrieve the text from the label by accessing the text attribute with a dictionary-style subscript notation
+To connect the buttons to the functions, assign the function to the button’s command attribute. You can do this when you instantiate the button. For example, to assign increase() to increase_button, update the line that instantiates the button to the following
+
+'''
+'''
+def increase():
+    value = int(label_output["text"])
+    label_output["text"] = f"{value+1}"
+def decrease():
+    value = int(label_output["text"])
+    label_output["text"] = f"{value-1}"
+
+window = tk.Tk()
+window.title("button command")
+window.rowconfigure(0, minsize=50, weight=1)
+window.columnconfigure([0, 1, 2], minsize=50, weight=1)
+label_output = tk.Label(master=window, text="0")
+label_output.grid(row=0, column=1, sticky="nsew")
+increase_button = tk.Button(
+    master=window,
+    text="+",
+    command=increase
+    
+)
+increase_button.grid(row=0, column=2, sticky="nsew")
+decrease_button = tk.Button(
+    master=window,
+    text="-",
+    command=decrease
+)
+decrease_button.grid(row=0, column=0, sticky="nsew")
+'''
+'''
 #personal test area
 #window
 window = tk.Tk()
@@ -472,6 +536,9 @@ for i in range(0, r):
             box.grid(row=i, column=j, sticky="wnes", padx=1)
         
             
+'''
+
+
 
 #without mainloop, nothing will be shown
 window.mainloop()

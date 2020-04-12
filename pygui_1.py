@@ -4,7 +4,7 @@ import tkinter as tk
 window = tk.Tk()
 
 #labels are for displaying text and images, text can't be edited by user
-greeting = label = tk.Label(
+greeting = tk.Label(
     text="Hello, Tkinter",
     foreground="white",  # Set the text color to white, fg can be written instead of foreground, bg for background
     background="black",  # Set the background color to black
@@ -513,7 +513,149 @@ lbl_result.grid(row=0, column=2, padx=10)
 # Run the application
 window.mainloop()
 '''
+#text editor 
+'''
+Building a Text Editor (Example App)
+In this section, you’ll build a text editor application that can create, open, edit, and save text files. There are three essential elements in the application:
 
+A Button widget called btn_open for opening a file for editing
+A Button widget called btn_save for saving a file
+A TextBox widget called txt_edit for creating and editing the text file
+The three widgets will be arranged so that the two buttons are on the left-hand side of the window, and the text box is on the right-hand side. The whole window should have a minimum height of 800 pixels, and txt_edit should have a minimum width of 800 pixels. The whole layout should be responsive so that if the window is resized, then txt_edit is resized as well. The width of the Frame holding the buttons should not change, however.
+
+You can achieve the desired layout using the .grid() geometry manager. The layout contains a single row and two columns:
+
+A narrow column on the left for the buttons
+A wider column on the right for the text box
+To set the minimum sizes for the window and txt_edit, you can set the minsize parameters of the window methods .rowconfigure() and .columnconfigure() to 800. To handle resizing, you can set the weight parameters of these methods to 1.
+
+In order to get both buttons into the same column, you’ll need to create a Frame widget called fr_buttons. According to the sketch, the two buttons should be stacked vertically inside of this frame, with btn_open on top. You can do that with either the .grid() or .pack() geometry manager. For now, you’ll stick with .grid() since it’s a little easier to work with.
+
+
+'''
+
+from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+
+def open_file():
+    """Open a file for editing.""" 
+    filepath = askopenfilename(
+        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")] # use the askopenfilename dialog from the tkinter.filedialog module to display a file open dialog and store the selected file path to filepath.
+    )
+    if not filepath:
+        return #check to see if the user closes the dialog box or clicks the Cancel button. If so, then filepath will be None, and the function will return without executing any of the code to read the file and set the text of txt_edit.
+    txt_edit.delete("1.0", tk.END) #clears the current contents of txt_edit using .delete().
+    with open(filepath, "r") as input_file:
+        text = input_file.read() #open the selected file and .read() its contents before storing the text as a string.
+        txt_edit.insert(tk.END, text) #assigns he string text to txt_edit using .insert().
+    window.title(f"Simple Text Editor - {filepath}") #sets the title of the window so that it contains the path of the open file.
+
+def save_file():
+    """Save the current file as a new file."""
+    filepath = asksaveasfilename(
+        defaultextension="txt", #use the asksaveasfilename dialog box to get the desired save location from the user. The selected file path is stored in the filepath variable.
+        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
+    )
+    if not filepath:
+        return #check to see if the user closes the dialog box or clicks the Cancel button. If so, then filepath will be None, and the function will return without executing any of the code to save the text to a file.
+    with open(filepath, "w") as output_file: #creates a new file at the selected file path.
+        text = txt_edit.get("1.0", tk.END) #extracts the text from txt_edit with .get() method and assigns it to the variable text.
+        output_file.write(text) #writes text to the output file.
+    window.title(f"Simple Text Editor - {filepath}") #updates the title of the window so that the new file path is displayed in the window title.
+
+
+window = tk.Tk()
+window.title("Simple Text Editor")
+
+window.rowconfigure(0, minsize=800, weight=1) #Take a look at line 6 more closely. The minsize parameter of .rowconfigure() is set to 800 and weight is set to 1. The first argument is 0, which sets the height of the first row to 800 pixels and makes sure that the height of the row grows proportionally to the height of the window. There’s only one row in the application layout, so these settings apply to the entire window.
+window.columnconfigure(1, minsize=800, weight=1) #Here, you use .columnconfigure() to set the width and weight attributes of the column with index 1 to 800 and 1, respectively:. Remember, row and column indices are zero-based, so these settings apply only to the second column. By configuring just the second column, the text box will expand and contract naturally when the window is resized, while the column containing the buttons will remain at a fixed width.
+
+txt_edit = tk.Text(window)
+fr_buttons = tk.Frame(window)
+btn_open = tk.Button(fr_buttons, text="Open", command=open_file)
+btn_save = tk.Button(fr_buttons, text="Save As...", command=save_file)
+
+btn_open.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+btn_save.grid(row=1, column=0, sticky="ew", padx=5)
+'''
+These two lines of code create a grid with two rows and one column in the fr_buttons frame since both btn_open and btn_save have their master attribute set to fr_buttons. btn_open is put in the first row and btn_save in the second row so that btn_open appears above btn_save in the layout, just you planned in your sketch.
+
+Both btn_open and btn_save have their sticky attributes set to "ew", which forces the buttons to expand horizontally in both directions and fill the entire frame. This makes sure both buttons are the same size.
+
+You place 5 pixels of padding around each button by setting the padx and pady parameters to 5. Only btn_open has vertical padding. Since it’s on top, the vertical padding offsets the button down from the top of the window a bit and makes sure that there’s a small gap between it and btn_save.
+'''
+fr_buttons.grid(row=0, column=0, sticky="ns")
+txt_edit.grid(row=0, column=1, sticky="nsew")
+'''
+These two lines of code create a grid with one row and two columns for window. You place fr_buttons in the first column and txt_edit in the second column so that fr_buttons appears to the left of txt_edit in the window layout.
+
+The sticky parameter for fr_buttons is set to "ns", which forces the whole frame to expand vertically and fill the entire height of its column. txt_edit fills its entire grid cell because you set its sticky parameter to "nsew", which forces it to expand in every direction.
+
+Now that the application layout is complete, add window.mainloop() to the bottom of the program and save and run the file. The following window is displayed:
+
+
+'''
+#window.mainloop()
+'''
+That looks great! But it doesn’t do anything just yet, so you need to start writing the commands for the buttons. btn_open needs to show a file open dialog and allow the user to select a file. It then needs to open that file and set the text of txt_edit to the contents of the file. Here’s a function open_file() that does just this:
+'''
+
+'''
+Now you can update the program so that btn_open calls open_file() whenever it’s clicked. There are a few things you need to do to update the program. First, import askopenfilename() from tkinter.filedialog by adding the following import to the top of your program
+Next, add the definition of open_file() just below the import statements:
+Finally, set the command attribute of btn_opn to open_file:
+Save the file and run it to check that everything is working. Then try opening a text file!
+
+'''
+'''
+With btn_open working, it’s time to work on the function for btn_save. This needs to open a save file dialog box so that the user can choose where they would like to save the file. You’ll use the asksaveasfilename dialog in the tkinter.filedialog module for this. This function also needs to extract the text currently in txt_edit and write this to a file at the selected location. Here’s a function that does just this:
+def save_file():
+    """Save the current file as a new file."""
+    filepath = asksaveasfilename(
+        defaultextension="txt", #use the asksaveasfilename dialog box to get the desired save location from the user. The selected file path is stored in the filepath variable.
+        filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")],
+    )
+    if not filepath:
+        return #check to see if the user closes the dialog box or clicks the Cancel button. If so, then filepath will be None, and the function will return without executing any of the code to save the text to a file.
+    with open(filepath, "w") as output_file: #creates a new file at the selected file path.
+        text = txt_edit.get("1.0", tk.END) #extracts the text from txt_edit with .get() method and assigns it to the variable text.
+        output_file.write(text) #writes text to the output file.
+    window.title(f"Simple Text Editor - {filepath}") #updates the title of the window so that the new file path is displayed in the window title.
+
+Now you can update the program so that btn_save calls save_file() when it’s clicked. Again, there are a few things you need to do in order to update the program. First, import asksaveasfilename() from tkinter.filedialog by updating the import at the top of your script, like so
+Next, add the definition of save_file() just below the open_file() definition:
+Finally, set the command attribute of btn_save to save_file:
+
+'''
+#resources 
+'''
+#official python tkinter tutorials: https://docs.python.org/3/library/tkinter.html 
+#references tkinter 8.5 : https://web.archive.org/web/20190524140835/https://infohost.nmt.edu/tcc/help/pubs/tkinter/web/index.html 
+#The Tk Commands (https://www.tcl.tk/man/tcl8.6/TkCmd/contents.htm ) reference is the definitive guide to commands in the Tk library. It’s written for the Tcl language, but it answers a lot of questions about why things work the way they do in Tkinter. The official Python docs have a section (https://docs.python.org/3/library/tkinter.html#mapping- basic-tk-into-tkinter) on mapping basic Tk into Tkinter that’s indispensable when you’re reading the Tk Commands doc.
+#tkdocs tkinter tutorials : https://tkdocs.com/tutorial/index.html 
+#official python doc : 1. https://docs.python.org/3/library/tkinter.ttk.html 2.https://docs.python.org/3/library/tkinter.tix.html 3.  https://docs.python.org/3/library/tkinter.scrolledtext.html 
+
+'''
+
+#application distribution
+
+'''
+Once you’ve created an application with Tkinter, you probably want to distribute that to your colleagues and friends. Here are some tutorials to get you going with that process:
+1. Using PyInstaller to Easily Distribute Python Applications (https://realpython.com/pyinstaller-python/ )
+2. 4 Attempts at Packaging Python as an Executable (https://tryexceptpass.org/article/package-python-as-executable/ )
+3. Building Standalone Python Applications with PyOxidizer (https://gregoryszorc.com/blog/2019/06/24/building-standalone-python-applications-with-pyoxidizer/)
+
+'''
+#other gui frameworks 
+
+'''
+Tkinter is not your only choice for a Python GUI framework. If Tkinter doesn’t meet the needs of your project, then here are some other frameworks to consider:
+
+1. How to Build a Python GUI Application With wxPython (https://realpython.com/python-gui-with-wxpython/)
+2. Python and PyQt: Building a GUI Desktop Calculator (https://realpython.com/python-gui-with-wxpython/)
+3. Building a Mobile Application With the Kivy Python Framework (https://realpython.com/mobile-app-kivy-python/)
+4. Add GUIs to your programs and scripts easily with PySimpleGUI (https://opensource.com/article/18/8/pysimplegui)
+'''
 
 '''
 #personal test area

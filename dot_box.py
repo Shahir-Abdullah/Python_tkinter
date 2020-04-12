@@ -2,6 +2,8 @@ import tkinter as tk
 #window
 window = tk.Tk()
 window.title("Dots & Boxes")
+#window.rowconfigure(0, minsize=50, weight=1)
+#window.columnconfigure([0, 1, 2, 4, 5, 6, 7, 8], minsize=50, weight=1)
 border_effects = {
     "flat": tk.FLAT,
     "sunken": tk.SUNKEN,
